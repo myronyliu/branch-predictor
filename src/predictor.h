@@ -14,23 +14,22 @@
   concerned about the memory used by the simulated branch predictor.
 */
 
-#define nHR 512 //512
-#define nPH 64 //64
-#define nPatBits 2
+#define n1 512 // 9 bits to track the program counter
+#define n2 64 // 6 bits to track the branch history
+#define n3 4 // 2 bits to track the pattern history (given a branch history)
 
-static unsigned int HR[nHR]; // 9 bits to track the instruction
-static unsigned int PH[nPH]; // 6 bits to track the branch history
-// each entry of PH is a two bit saturating counter
+static unsigned int t1[n1]; // local branch history registers 
+static unsigned int t2[n2]; // shared pattern history table
 
 /*
-  Let bPC be the number of bits we use to keep track of the instructions
-  Let bHR be the number of bits we use to keep track of the branch history
-  Let bPH be the number of bits we use to keep track of the pattern history
+  Let wPC be the number of bits we use to keep track of the program counter
+  Let wHR be the width of the entries a branch history register
+  Let wPH be the width of the entries in the pattern history table
 
-  Then the memory requirement for our two-level-local-predictor (int bits) is...
-    (2^bPC * 2^bHR) + (2^bPT * 2^bHR) = 2^bHR (2^bPC + 2^bPT)
+  Then the memory requirement for our two-level-local-predictor (in bits) is...
+    (2^wPC * 2^wHR) + (2^wPH * 2^wHR) = 2^wHR (2^wPC + 2^wPT)
   
-  As can be seen, for [bPC, bHR, bPH] = [9, 6, 2], we get exactly 32K + 256
+  As can be seen, for [wPC, wHR, wPH] = [9, 6, 2], we get exactly 32K + 256
 */
 
 /*

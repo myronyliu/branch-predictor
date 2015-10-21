@@ -4,24 +4,24 @@
 
 void init_predictor ()
 {
-    for (int i=0; i<nHR; ++i)
+    for (int i = 0; i < n1; ++i)
     {
-	HR[i] = i; // we do this to avoid aliasing
+	t1[i] = i; // we do this to avoid aliasing
     }
-    for (int i=0; i<nPH; ++i)
+    for (int i = 0; i < n2; ++i)
     {
-	PH[i] = pow(2, nPatBits-1); // initially, we predict all weakly taken
+	t2[i] = 0; // initially, we predict all strongly not taken
     }
 }
 
 bool make_prediction (unsigned int pc)
 {
-    return PH[HR[pc % nHR]] >= pow(2, nPatBits-1);
+    return t2[t1[pc % n1]] >= n3 / 2;
 }
 
 void train_predictor (unsigned int pc, bool outcome)
 {
     // note the order of operations
-    PH[HR[pc % nHR]] = (PH[HR[pc % nHR]] + 1) % (int)pow(2, nPatBits);
-    HR[pc % nHR] = (HR[pc % nHR] << 1) % nHR + outcome;
+    t2[t1[pc % n1]] = (t2[t1[pc % n1]] + 1) % n3;
+    t1[pc % n1] = (t1[pc % n1] << 1) % n2 + outcome;
 }
