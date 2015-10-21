@@ -21,7 +21,10 @@ bool make_prediction (unsigned int pc)
 
 void train_predictor (unsigned int pc, bool outcome)
 {
-    // note the order of operations
-    t2[t1[pc % n1]] = (t2[t1[pc % n1]] + 1) % n3;
+    int dSat = 2*(int)outcome - 1;
+    int sat = ((int)t2[t1[pc % n1]] + 2*outcome-1);
+    sat = (sat < 0) ? 0 : (sat >= n3) ? n3-1 : sat;
+
+    t2[t1[pc % n1]] = sat;
     t1[pc % n1] = (t1[pc % n1] << 1) % n2 + outcome;
 }
