@@ -14,8 +14,21 @@
   concerned about the memory used by the simulated branch predictor.
 */
 
+#define n 16384 // 14 bits to track the PC_xor_globalHistory
+#define m 4 // 2 bits to track the pattern history
 
+static unsigned int h; // the global history
+static unsigned int t[n]; // local branch history registers 
 
+/*
+  Let B be the number of bits we use to keep track of the PC_xor_globalHistory 
+  Let b be the width of the entries in the pattern history table
+
+  Then the memory requirement for our gshare-predictor (in bits) is 2^B * b
+  
+  We must pick [B, b] such as to not exceed the limit of 32K+256
+  e.g. One choice might be to use [B, b] = [14, 2]
+*/
 
 /*
   Initialize the predictor.
