@@ -6,8 +6,9 @@ void init_predictor ()
 {
     for (int i = 0; i < n; ++i)
     {
-	t[i] = 0; // initially, we predict all strongly not taken
+	t[i] = m / 2; // initially, we predict all weakly taken
     }
+    h = 0; // initialize the history to all zero bits
 }
 
 bool make_prediction (unsigned int pc)
@@ -20,9 +21,8 @@ void train_predictor (unsigned int pc, bool outcome)
 {
     int i = (pc % n) ^ h;
 
-    int dSat = 2*(int)outcome - 1;
-    int sat = ((int)t[i] + 2*outcome-1);
-    sat = (sat < 0) ? 0 : (sat >= m) ? m-1 : sat;
+    int sat = ((int)t[i] + 2*(int)outcome - 1); // increment or decrement the saturating counter
+    sat = (sat < 0) ? 0 : (sat > m-1) ? m-1 : sat; // and clamp it to the proper range
 
     t[i] = sat;
     h = (h << 1) % n + outcome;
