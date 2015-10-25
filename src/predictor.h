@@ -14,8 +14,29 @@
   concerned about the memory used by the simulated branch predictor.
 */
 
+#define nG2 4096    // 12 bit global history
 
+#define nL1 1024    // 10 bit program counter (for the LOCAL predictor)
+#define nL2 1024    // 10 bit local history
 
+#define nS 4096	    // 12 bit program counter (for the SELECTOR)
+
+static unsigned int hG1;
+static unsigned int tG2[nG2];
+
+static unsigned int tL1[nL1];
+static unsigned int tL2[nL2];
+
+static unsigned int tS[nS]; // the selector
+
+/*
+    The number of bits used is:
+	12 + 4096*2	    for the GLOBAL predictor
+	1024*10 + 1024*3    for the LOCAL  predictor
+	4096*2		    for the SELECTOR
+    This gives a total usage of  29696 bits,
+    which is less than 32K+256 = 33024 bits.
+*/
 
 /*
   Initialize the predictor.
