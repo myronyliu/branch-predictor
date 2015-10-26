@@ -14,9 +14,9 @@
   concerned about the memory used by the simulated branch predictor.
 */
 
-#define n1 1024 // 10 bits to track the program counter
-#define n2 8192 // 13 bits to track the local branch history
-#define n3 4 // 2 bits to track the pattern history (given a branch history)
+#define n1 2048 // 10 bits to track the program counter
+#define n2 2048 // 13 bits to track the local branch history
+#define n3 8 // 2 bits to track the pattern history (given a branch history)
 
 static unsigned int t1[n1]; // local branch history registers 
 static unsigned int t2[n2]; // shared pattern history table
