@@ -19,14 +19,14 @@
 //// "Piecewise Linear Branch Prediction" (Jimenez) ////
 ////////////////////////////////////////////////////////
 
-#define h 26	        // number of global history bits (dimension 3 of W)
-#define n 8		// number of unique branch PCs in dimension 1 of W
-#define m 118		// number of unique branch PCs in dimension 2 of W
-//#define theta 256	// threshhold (we train the predictor if theta is not reached)
-#define wBits 8		// weights can take on values in range [-2^(wBits-1), 2^(wBits-1)-1]
-#define wMin -128	// ... this must be consistent with wBits
+#define h 16		// number of global history bits (dimension 3 of W)
+#define n 16		// number of unique branch PCs in dimension 1 of W
+#define m 16		// number of unique branch PCs in dimension 2 of W
+#define wMin -128	// the number of bits to store each weight is wBits=log_2(2*|wMin|)
 
-static float theta = 2.14*(h + 1) + 20.58;
+// training threshhold (we train the predictor if theta is not reached)
+static float tmp = 2.14*(h + 1) + 20.58;
+static int theta = (tmp - (int)tmp < 0.5) ? (int)tmp : (int)tmp + 1;
 
 /*
     W holds the weights.
@@ -50,11 +50,10 @@ static int GA[h];   // the branch addresses corresponding to each entry of GHR
 
 /*
     The memory usage in bits is:
-	n*m*h*wBits	    for W
-	n*wBits		    for bias
-	h		    for GHR
-	h*log_2(n)	    for GA
-    where the extra bit in wBits+1 is to keep track of the sign
+		n*m*h*wBits			for W
+		n*wBits				for bias
+		h					for GHR
+		h*ceil(log_2(m))	for GA
 */
 
 

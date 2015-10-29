@@ -18,21 +18,21 @@ void init_predictor ()
     // Initialize all history bits and addresses to 0
     for (int i = 0; i < h; ++i)
     {
-	GHR[i] = 0;
-	GA[h] = 0;
+		GHR[i] = -1;
+		GA[h] = 0;
     }
 
     // Initialize all weights to 0
     for (int i = 0; i < n; ++i)
     {
-	for (int j = 0; j < m; ++j)
-	{
-	    for (int k = 0; k < h; ++k)
-	    {
-		W[i][j][k] = 0;
-	    }
-	}
-	bias[i] = 0;
+		for (int j = 0; j < m; ++j)
+		{
+		    for (int k = 0; k < h; ++k)
+		    {
+				W[i][j][k] = 0;
+		    }
+		}
+		bias[i] = 0;
     }
 }
 
@@ -44,7 +44,7 @@ bool make_prediction (unsigned int pc)
 
     for (int i = 0; i < h; ++i) // accumulate the dot product of history with weights
     {
-	y += W[B][GA[i]][i] * GHR[i];
+		y += W[B][GA[i]][i] * GHR[i];
     }
     return y >= 0;
 }
@@ -63,7 +63,7 @@ void train_predictor (unsigned int pc, bool outcome)
 
     for (int i = 0; i < h; ++i)
     {
-	y += W[B][GA[i]][i] * GHR[i];
+		y += W[B][GA[i]][i] * GHR[i];
     }
     bool t = (y >= 0);
 
@@ -73,12 +73,12 @@ void train_predictor (unsigned int pc, bool outcome)
 
     if (t != outcome || abs(y) < theta)
     {
-	for (int i = 0; i < h; ++i)
-	{
-	    W[B][GA[i]][i] = clamp(wMin, W[B][GA[i]][i] + sgn * GHR[i], -wMin - 1);
-	    // i.e. increment W[B][GA[i]][i] if GHR[i] == t; decrement otherwise
-	}
-	bias[B] = clamp(wMin, bias[B] + sgn, -wMin - 1);
+		for (int i = 0; i < h; ++i)
+		{
+		    W[B][GA[i]][i] = clamp(wMin, W[B][GA[i]][i] + sgn * GHR[i], -wMin - 1);
+		    // i.e. increment W[B][GA[i]][i] if GHR[i] == t; decrement otherwise
+		}
+		bias[B] = clamp(wMin, bias[B] + sgn, -wMin - 1);
     }
 
     ///////////////////////////
@@ -87,9 +87,9 @@ void train_predictor (unsigned int pc, bool outcome)
 
     for (int i = 1; i < h; ++i)
     {
-	GHR[i - 1] = GHR[i]; 
-	GA[i - 1] = GA[i];
+		GHR[i - 1] = GHR[i]; 
+		GA[i - 1] = GA[i];
     }
     GHR[h-1] = sgn;
-    GA[h-1] = B;
+    GA[h-1] = B % m;
 }
